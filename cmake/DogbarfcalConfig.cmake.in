@@ -1,0 +1,10 @@
+get_filename_component(DOGBARFCALCLIENT_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+include(CMakeFindDependencyMacro)
+
+find_dependency(PkgConfig)
+
+if(NOT TARGET SimpleDogBarf::SimpleDogBarf)
+    include("${DOGBARFCALCLIENT_CMAKE_DIR}/DogbarfcalTargets.cmake")
+endif()
+
+set(DOGBARFCALCLIENT_LIBRARIES Dogbarfcal::Dogbarfcal)

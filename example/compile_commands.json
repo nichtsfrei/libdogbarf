@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/philipp/src/nichtsfrei/libdogbarfcal/example/build",
+  "command": "/usr/bin/cc  -isystem /home/philipp/src/nichtsfrei/libdogbarfcal/include  -o CMakeFiles/print-weekly.dir/print_weekly.c.o -c /home/philipp/src/nichtsfrei/libdogbarfcal/example/print_weekly.c",
+  "file": "/home/philipp/src/nichtsfrei/libdogbarfcal/example/print_weekly.c"
+}
+]

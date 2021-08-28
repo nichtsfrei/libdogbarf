@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/philipp/src/nichtsfrei/libbarfcal/build",
+  "command": "/usr/bin/cc  -I/home/philipp/src/nichtsfrei/libbarfcal/include -I/home/philipp/src/nichtsfrei/libbarfcal/{CMAKE_CURRENT_SOURCE_DIR}/src  -o CMakeFiles/simpledogbarf.dir/src/simple_dog_barf.c.o -c /home/philipp/src/nichtsfrei/libbarfcal/src/simple_dog_barf.c",
+  "file": "/home/philipp/src/nichtsfrei/libbarfcal/src/simple_dog_barf.c"
+}
+]

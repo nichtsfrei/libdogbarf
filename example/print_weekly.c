@@ -74,9 +74,11 @@ int main(void)
 		printf("##Portion %d\n\n", i % portions->portions);
 		printf("|%-16s|%-8s|\n", "Type", "Amount");
 		printf("|");
-		for (j = 0; j < 16; j++) printf("-");
+		for (j = 0; j < 16; j++)
+			printf("-");
 		printf("|");
-		for (j = 0; j < 8; j++) printf("-");
+		for (j = 0; j < 8; j++)
+			printf("-");
 		printf("|\n");
 
 		if (already_mixed_meat == 0) {
@@ -139,4 +141,3 @@ int main(void)
 
 	return 0;
 }
-

@@ -116,27 +116,25 @@ char *bcd_supplement_type_string(enum bcd_supplement_type supplement_type)
 	return NULL;
 }
 
-float bcd_extra_multification_factor_severity(
-    enum bcd_extra_multification_factor extra_multification_factor)
+float bcd_extra_multiplier_severity(enum bcd_extra_multiplier extra_multiplier)
 {
-	switch (extra_multification_factor) {
+	switch (extra_multiplier) {
 #define X(a, b, c)                                                             \
 	case a:                                                                \
 		return b;
-		BCD_EXTRA_MULTIFICATION_FACTOR
+		BCD_EXTRA_MULTIPLIER
 #undef X
 	};
 	return 0;
 }
 
-char *bcd_extra_multification_factor_string(
-    enum bcd_extra_multification_factor extra_multification_factor)
+char *bcd_extra_multiplier_string(enum bcd_extra_multiplier extra_multiplier)
 {
-	switch (extra_multification_factor) {
+	switch (extra_multiplier) {
 #define X(a, b, c)                                                             \
 	case a:                                                                \
 		return c;
-		BCD_EXTRA_MULTIFICATION_FACTOR
+		BCD_EXTRA_MULTIPLIER
 #undef X
 	};
 	return NULL;
@@ -185,9 +183,8 @@ float bcd_span_unit_to(float value,
 	}
 }
 
-static float base_factor(enum bcd_dog_size dog_size,
-			 unsigned int age,
-			 enum bcd_span_unit span_unit)
+static float
+base(enum bcd_dog_size dog_size, unsigned int age, enum bcd_span_unit span_unit)
 {
 	float age_in_days;
 	age_in_days = to_days(age, span_unit);
@@ -227,7 +224,7 @@ static float base_factor(enum bcd_dog_size dog_size,
 	}
 }
 
-static float activity_factor(unsigned int activity_level_in_hours)
+static float activity(unsigned int activity_level_in_hours)
 {
 	if (activity_level_in_hours < 2)
 		return 1.0;
@@ -402,10 +399,10 @@ initialize_supplement_recommendations(float fpd, float appd)
 	return recommendations;
 }
 
-float bcd_calculate_factor(const struct bcd_dog *dog)
+float bcd_dog_multiplier(const struct bcd_dog *dog)
 {
-	float result = base_factor(dog->size, dog->age, dog->age_unit) *
-		       activity_factor(dog->activity_level_in_hours) *
+	float result = base(dog->size, dog->age, dog->age_unit) *
+		       activity(dog->activity_level_in_hours) *
 		       (dog->is_nautered || dog->is_old ? 0.9 : 1.0);
 	return result > 0.1 ? 0.1 : result;
 }
@@ -421,7 +418,7 @@ calculate_recommendation(const struct bcd_dog *dog,
 
 	float factor, fpd;
 	ALLOC_R_NULL(recommendation, 1);
-	factor = bcd_calculate_factor(dog);
+	factor = bcd_dog_multiplier(dog);
 
 	fpd = to_micro_gram(dog->weight, dog->weight_unit) * factor;
 	meat = initialize_animal_recommendations(fpd);
@@ -864,4 +861,3 @@ void bcd_destroy_portions(struct bcd_portions **portions)
 	free(*portions);
 	*portions = NULL;
 }
-

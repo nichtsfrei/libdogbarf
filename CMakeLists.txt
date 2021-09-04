@@ -21,9 +21,7 @@ target_include_directories(dogbarfcal
 )
 
 target_compile_options(dogbarfcal PRIVATE
-    $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
-    -Wall -Wextra -Wpedantic -fsanitize=address>)
-
+    -Wall -Wextra -Werror -Wsequence-point -Wstrict-prototypes -Wshadow -Wmissing-prototypes -Wpedantic -fsanitize=address)
 
 # Installation instructions
 

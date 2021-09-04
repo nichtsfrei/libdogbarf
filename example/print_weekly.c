@@ -3,42 +3,38 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define SEPERATOR                                                              \
-	for (i = 0; i < 196; i++)                                              \
-		printf("_");                                                   \
-	printf("\n");
-
-
-static char *number_to_day_string(unsigned int i) {
+static char *number_to_day_string(unsigned int i)
+{
 	switch (i) {
-		case 0:
-			return "monday";
-		case 1:
-			return "tuesday";
-		case 2:
-			return "wednesday";
-		case 3:
-			return "thursday";
-		case 4:
-			return "friday";
-		case 5:
-			return "saturday";
-		case 6:
-			return "sunday";
-		default:
-			return "unknown";
+	case 0:
+		return "Monday";
+	case 1:
+		return "Tuesday";
+	case 2:
+		return "Wednesday";
+	case 3:
+		return "Thursday";
+	case 4:
+		return "Friday";
+	case 5:
+		return "Saturday";
+	case 6:
+		return "Sunday";
+	default:
+		return "Unknown";
 	}
 }
 
-int main()
+#define ITEM_S_FORMAT "|%-16s|%-6.2f%-2s|\n"
+
+int main(void)
 {
-	int i, j, already_mixed_meat = 1;
+	unsigned i, j, already_mixed_meat = 1;
 	struct bcd_dog dog;
 	struct bcd_algae_powder algae;
 	struct bcd_recommendation *recommendation;
 	struct bcd_animal_recommendation *meat;
 	struct bcd_herbal_recommendation *herbal;
-	struct bcd_supplement_recommendation *supplement;
 	enum bcd_weight_unit animal_total_unit;
 	struct bcd_portions *portions;
 	float animal_total = 0;
@@ -56,108 +52,71 @@ int main()
 	algae.per = 1;
 	algae.per_unit = bcd_kilo_gram;
 	recommendation = calculate_recommendation(&dog, &algae);
-	
-
 
 	if ((portions = bcd_food_plan(1, bcd_week, 2, recommendation)) ==
 	    NULL) {
 		fprintf(stderr, "%s: unable to prepare food plan\n", __func__);
 	}
-	float plan_days =
-	    bcd_span_unit_to(portions->span, portions->span_unit, bcd_day);
-	for (i = 0; i < plan_days; i++)
-		printf("%-27s|", number_to_day_string(i));
 	printf("\n");
-	SEPERATOR;
 	struct bcd_animal_recommendation *ar;
 	struct bcd_herbal_recommendation *hr;
 	struct bcd_supplement_recommendation *sr;
 	struct bcd_recommendation *pr;
-	int al, hl, sl, k;
-	al = portions->recommendations->recommendations[0].animal->len;
-	hl = portions->recommendations->recommendations[0].herbal->len;
-	sl = portions->recommendations->recommendations[0].supplements->len;
-	for (k = 0; k < portions->portions; k++) {
+	for (i = 0; i < portions->recommendations->len; i++) {
+		pr = &portions->recommendations->recommendations[i];
+		bcd_recommendation_human_readable_units(pr);
+		if (i % portions->portions == 0) {
+			printf("#%s (%d)\n\n",
+			       number_to_day_string(i / portions->portions),
+			       i / portions->portions);
+		}
+
+		printf("##Portion %d\n\n", i % portions->portions);
+		printf("|%-16s|%-8s|\n", "Type", "Amount");
+		printf("|");
+		for (j = 0; j < 16; j++) printf("-");
+		printf("|");
+		for (j = 0; j < 8; j++) printf("-");
+		printf("|\n");
+
 		if (already_mixed_meat == 0) {
-			for (j = 0; j < al; j++) {
-				for (i = k; i < portions->recommendations->len;
-				     i += portions->portions) {
-					pr = &portions->recommendations
-						  ->recommendations[i];
-					bcd_recommendation_human_readable_units(
-					    pr);
-					ar = &pr->animal->recommendations[j];
-					printf("%-16s: %-6.2f%-2s %c",
-					       bcd_animal_type_string(ar->type),
-					       ar->amount,
-					       bcd_weight_unit_string(
-						   ar->weight_unit),
-					       '|');
-				}
-				printf("\n");
+			for (j = 0; j < pr->animal->len; j++) {
+				ar = &pr->animal->recommendations[j];
+				printf(ITEM_S_FORMAT,
+				       bcd_animal_type_string(ar->type),
+				       ar->amount,
+				       bcd_weight_unit_string(ar->weight_unit));
 			}
 		} else {
-			for (i = k; i < portions->recommendations->len;
-			     i += portions->portions) {
-
-				pr = &portions->recommendations
-					  ->recommendations[i];
-				bcd_animal_total(pr->animal,
-						 &animal_total,
-						 &animal_total_unit);
-				printf(
-				    "%-16s: %-6.2f%-2s %c",
-				    "total meat",
-				    animal_total,
-				    bcd_weight_unit_string(animal_total_unit),
-				    '|');
-			}
-			printf("\n");
+			bcd_animal_total(
+			    pr->animal, &animal_total, &animal_total_unit);
+			printf(ITEM_S_FORMAT,
+			       "total meat",
+			       animal_total,
+			       bcd_weight_unit_string(animal_total_unit));
 		}
-
-		for (j = 0; j < hl; j++) {
-			for (i = k; i < portions->recommendations->len;
-			     i += portions->portions) {
-				pr = &portions->recommendations
-					  ->recommendations[i];
-				bcd_recommendation_human_readable_units(pr);
-				hr = &pr->herbal->recommendations[j];
-				printf("%-16s: %-6.2f%-2s %c",
-				       bcd_herbal_type_string(hr->type),
-				       hr->amount,
-				       bcd_weight_unit_string(hr->weight_unit),
-				       '|');
-			}
-			printf("\n");
+		for (j = 0; j < pr->herbal->len; j++) {
+			hr = &pr->herbal->recommendations[j];
+			printf(ITEM_S_FORMAT,
+			       bcd_herbal_type_string(hr->type),
+			       hr->amount,
+			       bcd_weight_unit_string(hr->weight_unit));
 		}
-		for (j = 0; j < sl; j++) {
-			for (i = k; i < portions->recommendations->len;
-			     i += portions->portions) {
-				pr = &portions->recommendations
-					  ->recommendations[i];
-				bcd_recommendation_human_readable_units(pr);
-				if (j < pr->supplements->len) {
-					sr = &pr->supplements
-						  ->recommendations[j];
-					printf("%-16s: %-6.2f%-2s %c",
-					       bcd_supplement_type_string(
-						   sr->type),
-					       sr->amount,
-					       bcd_weight_unit_string(
-						   sr->weight_unit),
-					       '|');
-				}
-			}
-			printf("\n");
+		for (j = 0; j < pr->supplements->len; j++) {
+			sr = &pr->supplements->recommendations[j];
+			printf(ITEM_S_FORMAT,
+			       bcd_supplement_type_string(sr->type),
+			       sr->amount,
+			       bcd_weight_unit_string(sr->weight_unit));
 		}
-		SEPERATOR;
+		printf("\n");
 	}
 	if (bcd_recommendation_for_span(1, bcd_week, recommendation) < 0) {
 		fprintf(stderr,
 			"%s: failed to enhance recommendations to 1 week\n",
 			__func__);
 	}
-	printf("\n\nThe consumption per %d %s is :\n",
+	printf("\n\n#Consumption per %d %s\n",
 	       recommendation->span,
 	       bcd_span_unit_string(recommendation->span_unit));
 	bcd_recommendation_human_readable_units(recommendation);

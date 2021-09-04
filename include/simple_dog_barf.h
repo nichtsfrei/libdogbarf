@@ -87,7 +87,7 @@
 	X(bcd_animal_scallop, 0.5, "scallop")                                  \
 	X(bcd_animal_rumen, 0.2, "rumen")                                      \
 	X(bcd_animal_insides, 0.15, "insides")                                 \
-	X(bcd_animal_bones, 0.15, "bones")
+	X(bcd_animal_bones, 0.15, "raw meaty bones")
 
 #define BCD_HERBAL                                                             \
 	X(bcd_herbal_vegetables, 0.8, "vegetables")                            \

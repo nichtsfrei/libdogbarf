@@ -154,7 +154,7 @@ char *bcd_dog_size_string(enum bcd_dog_size dog_size)
 	return NULL;
 }
 
-float to_days(float value, enum bcd_span_unit span_unit)
+static float to_days(float value, enum bcd_span_unit span_unit)
 {
 	switch (span_unit) {
 	case bcd_year:
@@ -185,9 +185,9 @@ float bcd_span_unit_to(float value,
 	}
 }
 
-float base_factor(enum bcd_dog_size dog_size,
-		  unsigned int age,
-		  enum bcd_span_unit span_unit)
+static float base_factor(enum bcd_dog_size dog_size,
+			 unsigned int age,
+			 enum bcd_span_unit span_unit)
 {
 	float age_in_days;
 	age_in_days = to_days(age, span_unit);
@@ -227,7 +227,7 @@ float base_factor(enum bcd_dog_size dog_size,
 	}
 }
 
-float activity_factor(unsigned int activity_level_in_hours)
+static float activity_factor(unsigned int activity_level_in_hours)
 {
 	if (activity_level_in_hours < 2)
 		return 1.0;
@@ -242,7 +242,7 @@ float activity_factor(unsigned int activity_level_in_hours)
 	return 2.5;
 }
 
-float to_micro_gram(float value, enum bcd_weight_unit weight_unit)
+static float to_micro_gram(float value, enum bcd_weight_unit weight_unit)
 {
 	switch (weight_unit) {
 	case bcd_kilo_gram:
@@ -264,9 +264,9 @@ float to_micro_gram(float value, enum bcd_weight_unit weight_unit)
 	}
 }
 
-float to_weight_unit(float value,
-		     enum bcd_weight_unit value_unit,
-		     enum bcd_weight_unit to_unit)
+static float to_weight_unit(float value,
+			    enum bcd_weight_unit value_unit,
+			    enum bcd_weight_unit to_unit)
 {
 	float mg = to_micro_gram(value, value_unit);
 	switch (to_unit) {
@@ -289,8 +289,8 @@ float to_weight_unit(float value,
 	}
 }
 
-float algae_powder_per_day(const struct bcd_algae_powder *algae_powder,
-			   const struct bcd_dog *dog)
+static float algae_powder_per_day(const struct bcd_algae_powder *algae_powder,
+				  const struct bcd_dog *dog)
 {
 	float jod_percent, jod_algae_powder_percent;
 	float age_in_days;
@@ -318,7 +318,8 @@ float algae_powder_per_day(const struct bcd_algae_powder *algae_powder,
 	       jod_algae_powder_percent;
 }
 
-struct bcd_animal_recommendations *initialize_animal_recommendations(float food)
+static struct bcd_animal_recommendations *
+initialize_animal_recommendations(float food)
 {
 	struct bcd_animal_recommendations *recommendations;
 	struct bcd_animal_recommendation *recommendation;
@@ -346,7 +347,8 @@ struct bcd_animal_recommendations *initialize_animal_recommendations(float food)
 	return recommendations;
 }
 
-struct bcd_herbal_recommendations *initialize_herbal_recommendations(float food)
+static struct bcd_herbal_recommendations *
+initialize_herbal_recommendations(float food)
 {
 	struct bcd_herbal_recommendations *recommendations;
 	struct bcd_herbal_recommendation *recommendation;
@@ -366,7 +368,7 @@ struct bcd_herbal_recommendations *initialize_herbal_recommendations(float food)
 	recommendations->recommendations = recommendation;
 	return recommendations;
 }
-struct bcd_supplement_recommendations *
+static struct bcd_supplement_recommendations *
 initialize_supplement_recommendations(float fpd, float appd)
 {
 	struct bcd_supplement_recommendations *recommendations;
@@ -473,7 +475,7 @@ int bcd_recommendation_for_span(unsigned int span,
 	return 0;
 }
 
-int is_liter(enum bcd_weight_unit unit)
+static int is_liter(enum bcd_weight_unit unit)
 {
 	switch (unit) {
 	case bcd_kilo_liter:
@@ -486,7 +488,7 @@ int is_liter(enum bcd_weight_unit unit)
 	}
 }
 
-int to_highest_weight_unit(float *value, enum bcd_weight_unit *unit)
+static int to_highest_weight_unit(float *value, enum bcd_weight_unit *unit)
 {
 	float mg;
 	mg = to_micro_gram(*value, *unit);
@@ -583,7 +585,7 @@ base_plan(unsigned int span,
 	  enum bcd_span_unit span_unit,
 	  const struct bcd_recommendation *base);
 
-struct bcd_recommendation *
+static struct bcd_recommendation *
 copy_recommendation(const struct bcd_recommendation *recommendation)
 {
 	unsigned int i;
@@ -772,6 +774,7 @@ struct bcd_portions *bcd_food_plan(unsigned int span,
 				if ((i / portions_per_day) % 2 == 0) {
 					break;
 				}
+				continue;
 
 			case bcd_supplement_algae_powder:
 				// ignore sunday
@@ -831,21 +834,30 @@ failure:
 	return NULL;
 }
 
-void bcd_destroy_portions(struct bcd_portions **portions) {
+void bcd_destroy_portions(struct bcd_portions **portions)
+{
 	unsigned int i;
 
 	if (portions == NULL || *portions == NULL) {
 		return;
 	}
 	// clear shared herbal and animal recommendations
-	free((*portions)->recommendations->recommendations[0].animal->recommendations);
+	free((*portions)
+		 ->recommendations->recommendations[0]
+		 .animal->recommendations);
 	free((*portions)->recommendations->recommendations[0].animal);
-	free((*portions)->recommendations->recommendations[0].herbal->recommendations);
+	free((*portions)
+		 ->recommendations->recommendations[0]
+		 .herbal->recommendations);
 	free((*portions)->recommendations->recommendations[0].herbal);
-	// each supplement	
-	for (i = 0; i < (*portions)->recommendations->len; i++){
-		free((*portions)->recommendations->recommendations[i].supplements->recommendations);
-		free((*portions)->recommendations->recommendations[i].supplements);
+	// each supplement
+	for (i = 0; i < (*portions)->recommendations->len; i++) {
+		free((*portions)
+			 ->recommendations->recommendations[i]
+			 .supplements->recommendations);
+		free((*portions)
+			 ->recommendations->recommendations[i]
+			 .supplements);
 	}
 	free((*portions)->recommendations->recommendations);
 	free((*portions)->recommendations);

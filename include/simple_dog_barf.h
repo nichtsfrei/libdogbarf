@@ -11,18 +11,16 @@
  * Of those 80% animal it assumes:
  * - * 0.5 scallop ( * 0.15-0.25 fat);
  * - * 0.2 rumen;
- * - * 0.15 insides;
- * - * 0.15 mix of bones and meat.
+ * - * 0.15 insides
+ * - * 0.15 raw bones and and meat.
  *
  * Of those 20% herbal: * 0.7 vegetables; * 0.3 fruits.
- *
- * And two exchange meat variants: chicken (5% fat) and beef (10%) for flesh.
  *
  * Fat within meat varies from 5% - 25% percent the amount of fat needs to be
  * at least 15% for a dog. The rest will be enhanced via additional fat
  * (e.g. coconut oil).
  *
- * S. 65 for stuff which cannot be fed to a dog.
+ * This calculator assumes an average of 8% fat within the meat. 
  *
  * The amount of food is:
  * - 2-4% adult animals
@@ -64,22 +62,16 @@
  *		- < 10 months: 29 * 0.6 ~ 17.4
  *		- < 1 year: 29 * 0.5 ~ 14.5
  *		- above that 12.7µg per kg
+ *
  *	Although various calulator assume more based on food and energy
  *  consumption we stick with that assuming a higher dosis due to measurements
  *  mistakes and mood swings within a household.
  *
- *	Don't worry industrial food (in Germany) is off by more than 600% or so.
- *
- *	Therefore it's fair to assume that a bit too much isn't that
- *  disasterous.
- *
- *	We stick with conservative calculation anyway.
- *
  * Cod liver oild:
- * We assume here 0.017 * weekly portion and portion it three times per week.
+ * We assume 0.00000463 * food portion
  *
  * Omega 3 Oil:
- * We assume 0.01 * weekly portion portioned daily.
+ * We assume 0.0000093 * food portion.
  *
  */
 
@@ -103,13 +95,6 @@
 	X(bcd_emf_old, 0.9, "old")                                             \
 	X(bcd_emf_nautered, 0.9, "nautered")
 
-// cod liver oild is about:
-// 20 kg - 5ml
-// 40 kg - 10 ml,
-// > 60 - 15ml
-// per day; salmon oil is double that
-// For algae powder there is a different calculation based on the recommendation
-// of ... As a fallback we use 25mg per 10kg
 #define BCD_SUPPLEMENT                                                         \
 	X(bcd_supplement_unset, 0.0, "ignored")                                \
 	X(bcd_supplement_algae_powder, 0.00000463, "algae powder")             \

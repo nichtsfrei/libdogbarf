@@ -771,8 +771,7 @@ struct bcd_portions *bcd_food_plan(unsigned int span,
 				if ((i / portions_per_day) % 2 == 0) {
 					break;
 				}
-				continue;
-
+				// fall-through	
 			case bcd_supplement_algae_powder:
 				// ignore sunday
 				if (sr->len == per_day->supplements->len - 3 ||

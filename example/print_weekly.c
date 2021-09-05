@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#define ITEM_S_FORMAT "|%-16s|%-6.2f%-2s|\n"
+
 static char *number_to_day_string(unsigned int i)
 {
 	switch (i) {
@@ -25,7 +27,6 @@ static char *number_to_day_string(unsigned int i)
 	}
 }
 
-#define ITEM_S_FORMAT "|%-16s|%-6.2f%-2s|\n"
 
 int main(void)
 {
@@ -62,16 +63,24 @@ int main(void)
 	struct bcd_herbal_recommendation *hr;
 	struct bcd_supplement_recommendation *sr;
 	struct bcd_recommendation *pr;
+	printf("<div id=\"toc\">\n# [Table of content](#toc)\n\n");
+	for (i = 0; i < 6; i++)
+		printf("1. [%s](#d%d)\n", number_to_day_string(i), i);
+	printf("</div>");
 	for (i = 0; i < portions->recommendations->len; i++) {
 		pr = &portions->recommendations->recommendations[i];
 		bcd_recommendation_human_readable_units(pr);
 		if (i % portions->portions == 0) {
-			printf("#%s (%d)\n\n",
+			if (i > 0)
+				printf("</div>");
+			printf("<div id=\"d%d\">", i / portions->portions);
+			printf("# [%s](#d%d)\n\n",
 			       number_to_day_string(i / portions->portions),
 			       i / portions->portions);
 		}
 
-		printf("##Portion %d\n\n", i % portions->portions);
+		printf("<div id=\"p%d\">", i);
+		printf("## [Portion %d](#p%d)\n\n", i % portions->portions, i);
 		printf("|%-16s|%-8s|\n", "Type", "Amount");
 		printf("|");
 		for (j = 0; j < 16; j++)
@@ -111,14 +120,15 @@ int main(void)
 			       sr->amount,
 			       bcd_weight_unit_string(sr->weight_unit));
 		}
-		printf("\n");
+		printf("\n</div>\n");
 	}
 	if (bcd_recommendation_for_span(1, bcd_week, recommendation) < 0) {
 		fprintf(stderr,
 			"%s: failed to enhance recommendations to 1 week\n",
 			__func__);
 	}
-	printf("\n\n#Consumption per %d %s\n",
+	printf("\n\n<div id=\"buy_weekly\">");
+	printf("# [Consumption per %d %s](#buy_weekly)\n",
 	       recommendation->span,
 	       bcd_span_unit_string(recommendation->span_unit));
 	bcd_recommendation_human_readable_units(recommendation);
@@ -136,6 +146,7 @@ int main(void)
 		       herbal->amount,
 		       bcd_weight_unit_string(herbal->weight_unit));
 	}
+	printf("</div>");
 	bcd_destroy_recommendation(&recommendation);
 	bcd_destroy_portions(&portions);
 

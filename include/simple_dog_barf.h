@@ -218,16 +218,15 @@ struct bcd_herbal_recommendations {
 /**
  * @brief contains information about supplement
  *
- * - type; is used to determine the type of supplement
- * - amount; the amount of ingredient
- * - weight_unit; the measurement unit of amount
  */
 struct bcd_supplement_recommendation {
-	enum bcd_supplement_type type;
-	enum bcd_weight_unit weight_unit;
-	float amount;
+	enum bcd_supplement_type type; ///< Kind of supplement
+	enum bcd_weight_unit weight_unit; ///< Weight unit of supplement
+	float amount; ///< Amount of supplement
 };
-
+/**
+ * @brief contains multiple supplement recommendations
+ */
 struct bcd_supplement_recommendations {
 	unsigned int len;
 	unsigned int cap;
